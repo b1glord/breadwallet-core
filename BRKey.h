@@ -84,6 +84,8 @@ size_t BRKeyPrivKey(const BRKey *key, char *privKey, size_t pkLen);
 // writes the DER encoded public key to pubKey and returns number of bytes written, or pkLen needed if pubKey is NULL
 size_t BRKeyPubKey(BRKey *key, void *pubKey, size_t pkLen);
 
+size_t BRKeyUncompressedPubKey(BRKey *key, void *pubKey, size_t pkLen);
+
 // returns the ripemd160 hash of the sha256 hash of the public key, or UINT160_ZERO on error
 UInt160 BRKeyHash160(BRKey *key);
 

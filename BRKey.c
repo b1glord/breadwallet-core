@@ -268,6 +268,27 @@ size_t BRKeyPubKey(BRKey *key, void *pubKey, size_t pkLen)
     return (! pubKey || size <= pkLen) ? size : 0;
 }
 
+// writes the DER encoded public key to pubKey and returns number of bytes written, or pkLen needed if pubKey is NULL
+size_t BRKeyUncompressedPubKey(BRKey *key, void *pubKey, size_t pkLen)
+{
+    static uint8_t empty[65]; // static vars initialize to zero
+    size_t size = 65;
+    secp256k1_pubkey pk;
+
+    assert(key != NULL);
+
+    if (memcmp(key->pubKey, empty, size) == 0) {
+        if (secp256k1_ec_pubkey_create(_ctx, &pk, key->secret.u8)) {
+            secp256k1_ec_pubkey_serialize(_ctx, key->pubKey, &size, &pk,
+                                          SECP256K1_EC_UNCOMPRESSED);
+        }
+        else size = 0;
+    }
+
+    if (pubKey && size <= pkLen) memcpy(pubKey, key->pubKey, size);
+    return (! pubKey || size <= pkLen) ? size : 0;
+}
+
 // returns the ripemd160 hash of the sha256 hash of the public key
 UInt160 BRKeyHash160(BRKey *key)
 {
